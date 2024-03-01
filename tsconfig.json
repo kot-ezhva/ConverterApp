@@ -1,3 +1,24 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "./src",
+
+    "paths": {
+      "@root": ["./"],
+      "@assets": ["assets"],
+      "@assets/*": ["assets/*"],
+      "@navigation/*": ["navigation/*"],
+      "@navigation": ["navigation"],
+      "@screens": ["screens"],
+      "@components": ["components"],
+      "@components/*": ["components/*"],
+      "@utils": ["utils"],
+      "@utils/*": ["utils/*"],
+    }
+  }
 }

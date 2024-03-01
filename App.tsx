@@ -1,118 +1,64 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { MainStackNavigator } from '@navigation';
+import { DarkTheme, LightTheme } from '@utils/themes';
+import { Splash } from '@screens';
+import Api from '@utils/Api';
+import { showError } from '@utils/Helper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORED_CURRENCIES_RATES_KEY } from '@utils/Constants';
+import supportedCurrencies from '@assets/supported_currencies.json';
+import { Currency } from '@utils/Types';
+import { ConverterProvider } from '@utils/ConverterContext';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const isDark = useColorScheme() === 'dark';
+  const theme = isDark ? DarkTheme : LightTheme;
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const [loading, setLoading] = useState(true);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  useEffect(() => {
+    init();
+  }, []);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  const init = async () => {
+    const savedRates = (await AsyncStorage.getItem(STORED_CURRENCIES_RATES_KEY)) || '';
+    const rates: Currency[] = savedRates
+      ? JSON.parse(savedRates)
+      : supportedCurrencies.map(item => ({ ...item, rateToUSD: 0 }));
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+    await AsyncStorage.setItem(STORED_CURRENCIES_RATES_KEY, JSON.stringify(rates));
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    // Update remote rate values
+    try {
+      const { rates: remoteRates } = await Api.getLatestCurrencyRatesUSDBased();
+      if (Object.keys(remoteRates).length) {
+        const newRates: Currency[] = rates.map(item => ({
+          ...item,
+          rateToUSD: remoteRates[item.code] || 0,
+        }));
+
+        await AsyncStorage.setItem(STORED_CURRENCIES_RATES_KEY, JSON.stringify(newRates));
+      }
+    } catch (e: any) {
+      showError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+  if (loading) {
+    return <Splash />;
+  }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  return (
+    <NavigationContainer theme={theme}>
+      <ConverterProvider>
+        <MainStackNavigator />
+      </ConverterProvider>
+    </NavigationContainer>
+  );
+};
 
 export default App;
