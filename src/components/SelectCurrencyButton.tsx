@@ -18,8 +18,8 @@ const SelectCurrencyButton = ({ currency, onPress }: Props) => {
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity style={[{ opacity: !currency ? 0.5 : 1 }]} activeOpacity={0.8} onPress={onPress}>
-      <View style={[styles.container, { backgroundColor: colors.notification }]}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+      <View style={[styles.container, { backgroundColor: colors.notification, opacity: !currency ? 0.5 : 1 }]}>
         {currency && <FastImage style={styles.flag} source={{ uri: currency.flagSrc }} />}
         <Text style={[styles.text, { color: colors.text }]} numberOfLines={1}>
           {currency ? currency.code : 'Select currency'}

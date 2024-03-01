@@ -60,7 +60,9 @@ const SelectCurrencyScreen = ({ navigation, route }: Props) => {
         <FastImage source={{ uri: item.flagSrc }} style={styles.flag} />
         <Text style={[styles.text, { color: colors.text }]} numberOfLines={1}>{`${item.code} - ${item.name}`}</Text>
 
-        <View style={[styles.checkbox, { borderColor: colors.text }]}>{isSelected && <View style={[styles.checkboxDot, { backgroundColor: colors.text}]} />}</View>
+        <View style={[styles.checkbox, { borderColor: colors.text }]}>
+          {isSelected && <View style={[styles.checkboxDot, { backgroundColor: colors.text }]} />}
+        </View>
       </TouchableOpacity>
     );
   };

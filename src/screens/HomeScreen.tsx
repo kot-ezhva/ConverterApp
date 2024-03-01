@@ -8,7 +8,6 @@ import commonStyles, { CONTAINER_PADDING } from '@assets/commonStyles';
 import { Input, SelectCurrencyButton } from '@components';
 import { useConverter } from '@utils/ConverterContext';
 import FastImage from 'react-native-fast-image';
-import { useTheme } from "@react-navigation/native";
 
 const arrows = require('@assets/icons/arrows-left-right.png');
 
@@ -19,7 +18,6 @@ const regExp = new RegExp(/^-?\d*\.?\d*$/);
 type Props = NativeStackScreenProps<MainStackParams, ROUTES.Home>;
 
 const HomeScreen = ({ navigation }: Props) => {
-  const { colors } = useTheme();
   const [amount, setAmount] = useState('');
   const [result, setResult] = useState('');
 
