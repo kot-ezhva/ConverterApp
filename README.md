@@ -1,3 +1,19 @@
+# 
+
+1. `git clone [git@github.com](mailto:git@github.com):kot-ezhva/ConverterApp.git`
+2. `cd ConverterApp && yarn`  - Install dependencies
+3. `npx pod-install` - Install cocoapods
+4. `yarn start` and press `i` in terminal to run ios-Simulator with app
+
+---
+1. Using `react-native-fast-image` for better performance
+2. Add dark theme by device appearance
+3. Use babel resolver for simply import components with aliases
+---
+
+
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
