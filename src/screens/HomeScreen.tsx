@@ -8,6 +8,7 @@ import commonStyles, { CONTAINER_PADDING } from '@assets/commonStyles';
 import { Input, SelectCurrencyButton } from '@components';
 import { useConverter } from '@utils/ConverterContext';
 import FastImage from 'react-native-fast-image';
+import { useTheme } from '@react-navigation/native';
 
 const arrows = require('@assets/icons/arrows-left-right.png');
 
@@ -20,6 +21,8 @@ type Props = NativeStackScreenProps<MainStackParams, ROUTES.Home>;
 const HomeScreen = ({ navigation }: Props) => {
   const [amount, setAmount] = useState('');
   const [result, setResult] = useState('');
+
+  const { colors } = useTheme();
 
   const { fromCurrency, toCurrency, setFromCurrency, setToCurrency } = useConverter();
 
@@ -78,10 +81,12 @@ const HomeScreen = ({ navigation }: Props) => {
 
         <View style={styles.resultContainer}>
           {!!amount && fromCurrency && (
-            <Text style={styles.resultText}>{`${amount + fromCurrency.symbolNative} =`}</Text>
+            <Text style={[styles.resultText, { color: colors.text }]}>{`${amount + fromCurrency.symbolNative} =`}</Text>
           )}
           {fullfiled && !!result.length && (
-            <Text style={styles.resultBigText}>{`${result} ${toCurrency?.symbolNative}`}</Text>
+            <Text
+              style={[styles.resultBigText, { color: colors.text }]}
+            >{`${result} ${toCurrency?.symbolNative}`}</Text>
           )}
         </View>
       </SafeAreaView>
