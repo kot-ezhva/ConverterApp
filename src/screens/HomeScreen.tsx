@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Dimensions, Keyboard, TouchableWithoutFeedback, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Dimensions, View, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParams } from '@navigation/MainStackNavigator';
 import ROUTES from '@utils/Routes';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles, { CONTAINER_PADDING } from '@assets/commonStyles';
-import { Input, SelectCurrencyButton } from '@components';
+import { AccountSwiper, Input, SelectCurrencyButton } from '@components';
 import { useConverter } from '@utils/ConverterContext';
 import FastImage from 'react-native-fast-image';
 import { useTheme } from '@react-navigation/native';
@@ -54,49 +54,46 @@ const HomeScreen = ({ navigation }: Props) => {
   };
 
   return (
-    <TouchableWithoutFeedback style={commonStyles.flex} onPress={Keyboard.dismiss}>
-      <SafeAreaView style={[styles.container]}>
-        <View style={styles.buttonsContainer}>
-          <SelectCurrencyButton
-            currency={fromCurrency}
-            onPress={() => navigation.navigate(ROUTES.SelectCurrency, { isFrom: true })}
-          />
-          <TouchableOpacity style={styles.swapBtn} onPress={swapCurrencies}>
-            <FastImage source={arrows} style={styles.swapIcon} />
-          </TouchableOpacity>
-          <SelectCurrencyButton
-            currency={toCurrency}
-            onPress={() => navigation.navigate(ROUTES.SelectCurrency, { isFrom: false })}
-          />
-        </View>
+    <SafeAreaView style={[styles.container]}>
+      <AccountSwiper />
 
-        <Input
-          label="Amount:"
-          keyboardType="numeric"
-          placeholder="Enter amount"
-          inputMode="decimal"
-          value={amount}
-          onChangeText={setValidAmount}
+      <View style={styles.buttonsContainer}>
+        <SelectCurrencyButton
+          currency={fromCurrency}
+          onPress={() => navigation.navigate(ROUTES.SelectCurrency, { isFrom: true })}
         />
+        <TouchableOpacity style={styles.swapBtn} onPress={swapCurrencies}>
+          <FastImage source={arrows} style={styles.swapIcon} />
+        </TouchableOpacity>
+        <SelectCurrencyButton
+          currency={toCurrency}
+          onPress={() => navigation.navigate(ROUTES.SelectCurrency, { isFrom: false })}
+        />
+      </View>
 
-        <View style={styles.resultContainer}>
-          {!!amount && fromCurrency && (
-            <Text style={[styles.resultText, { color: colors.text }]}>{`${amount + fromCurrency.symbolNative} =`}</Text>
-          )}
-          {fullfiled && !!result.length && (
-            <Text
-              style={[styles.resultBigText, { color: colors.text }]}
-            >{`${result} ${toCurrency?.symbolNative}`}</Text>
-          )}
-        </View>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+      <Input
+        label="Amount:"
+        keyboardType="numeric"
+        placeholder="Enter amount"
+        inputMode="decimal"
+        value={amount}
+        onChangeText={setValidAmount}
+      />
+
+      <View style={styles.resultContainer}>
+        {!!amount && fromCurrency && (
+          <Text style={[styles.resultText, { color: colors.text }]}>{`${amount + fromCurrency.symbolNative} =`}</Text>
+        )}
+        {fullfiled && !!result.length && (
+          <Text style={[styles.resultBigText, { color: colors.text }]}>{`${result} ${toCurrency?.symbolNative}`}</Text>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...commonStyles.flex,
     padding: CONTAINER_PADDING,
     paddingTop: deviceHeight / 4,
   },
